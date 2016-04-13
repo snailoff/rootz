@@ -1,7 +1,10 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
-require 'Haml'
+require 'haml'
 require 'rouge'
+require 'logger'
+require 'pathname'
+
 require './rootz'
 
 configure do
@@ -30,7 +33,5 @@ get '*' do
   redirect to('/root/')
 end
 
-require 'logger'
-require 'pathname'
 
 
