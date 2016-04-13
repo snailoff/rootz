@@ -1,0 +1,19 @@
+%html
+	%head
+		%title rootz
+		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/bootstrap.min.css'}
+		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/bootstrap-theme.min.css'}
+		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/style.css'}
+		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/rouge.css'}
+		
+	%body
+		.container
+			.logo
+				%span{:class => "title"}
+					%a{:href => "/"} rootz
+
+			%img{:class => "header_image", :src => "/default.jpg"}
+			.rootz
+				%strong= @rz.navi
+				%h3{:class => "subject"}= @rz.subject
+				%p= @rz.parsed
