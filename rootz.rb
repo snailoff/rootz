@@ -197,7 +197,7 @@ module Rootz
 				if File.file? file
 					files << convert_link(file) if file =~ /\.rz$/
 				else
-					dirs << '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;' + convert_link(file)
+					dirs << '<span style="font-weight:bold;">+</span>&nbsp;&nbsp;' + convert_link(file)
 				end
 			end
 			dirs += files
