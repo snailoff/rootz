@@ -6,6 +6,7 @@ require 'logger'
 require 'pathname'
 
 require './rootz'
+require './version'
 
 configure do
 end
