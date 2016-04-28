@@ -30,7 +30,7 @@ get '/root/*' do |path|
 	
 end
 
-get '*' do
+get '/*' do
   redirect to('/root/')
 end
 

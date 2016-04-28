@@ -12,22 +12,21 @@ module Rootz
 	end
 
 	class Root
-		attr_accessor :subject, :navi, :parsed, :created, :redirect_url
+		attr_accessor :subject, :navi, :parsed, :created, :redirect_url, :header_image
 
 		def initialize path
-			puts "\n\n"
 			Rootz.logger.info
 			@input_url = "/root/#{path}" 
 			@input_path = path
 			@target_path = "#{File.expand_path "../public/root", __FILE__}/#{@input_path}"
+			@default_file_path = ''
+			@header_image = ''
 
 			Rootz.logger.info "@input_path : #{@input_path}"
 		end
 
 		def check
 			Rootz.logger.info
-			
-
 			Rootz.logger.info "target full path : #{@target_path}"
 
 			unless File.exist? @target_path
@@ -46,9 +45,18 @@ module Rootz
 				raise Rootz::InvalidPathError.new({:redirect_url => "#{@input_url}/"}), "redirect dir"
 			end
 
+			if !@is_file 
+				target = "#{@target_path}_#{File.basename @target_path}"
+				@default_file_path = target if File.exist? target
+			end
+
+			@header_image = default_image @target_path
 			@navi = convert_navi last_dir(@target_path)
 			@subject = @is_file ? basename(@target_path) : "*"
-			
+
+			Rootz.logger.info "@subject : #{@subject}"
+			Rootz.logger.info "@default_file_path : #{@default_file_path}"
+			Rootz.logger.info "@header_image : #{@header_image}"
 		end
 
 		def read
@@ -57,9 +65,9 @@ module Rootz
 
 			if @is_file
 				@plain = read_file @target_path
-
 			else
 				@plain = read_dir @target_path
+				@plain = "#{read_file @default_file_path}\n\n#{@plain}" if File.exist? @default_file_path
 			end
 		end
 
@@ -96,7 +104,6 @@ module Rootz
 						next
 					else
 						codeBlockContent += line + "\n"
-						Rootz.logger.debug "add line : #{line}"
 						next
 					end
 				else
@@ -219,11 +226,6 @@ module Rootz
 			name = remove_tail(remove_head(remove_root_prefix(basename(path))))
 
 			rs = "<a href=\"#{url}\">#{name}</a> <span class=\"datetime\">#{datetime}</span>"
-
-			# # rs = remove_head(rs)
-			# rs = remove_tail(rs)
-			# rs = replace_spliter(rs)
-			# path
 			rs
 		end
 
@@ -264,6 +266,31 @@ module Rootz
 			str.gsub /0/, 'o'
 		end
 		
+		def default_image path
+			return "/default.jpg" if path == "/"
+
+			if File.file? path
+				name = File.basename path, '.rz'
+				dir = File.dirname path
+				target = File.join "#{dir}", "#{name}.*"
+				Dir.glob "#{target}" do |f|
+					if f =~ /\.(png|jpg|gif)$/i
+						return remove_root_prefix f
+					end
+				end
+			else
+				name = File.basename path, '.rz'
+				target = File.join "#{path}", "_#{name}.*"
+				Dir.glob "#{target}" do |f|
+					if f =~ /\.(png|jpg|gif)$/i
+						return remove_root_prefix f
+					end
+				end
+			end
+
+			default_image File.dirname(path)
+		end
+
 	end
 
 
