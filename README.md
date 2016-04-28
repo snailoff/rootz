@@ -6,7 +6,7 @@
 ```
 $ git clone https://github.com/snailoff/rootz.git
 $ cd rootz
-$ gem install sinatra sinatra-contrib thin haml rouge logger
+$ gem install sinatra sinatra-contrib thin haml rouge logger sass
 
 $ thin start
 or

@@ -79,16 +79,13 @@ module Rootz
 						lexer = Rouge::Lexer.find codeBlockName
 
 						if lexer 
-							source = codeBlockContent
+							source = "\n" + codeBlockContent
 							formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
-							result = formatter.format(lexer.lex(source))
-							@parsed += result
+							@parsed += formatter.format(lexer.lex(source))
 							Rootz.logger.debug "rouge parsing ... (#{codeBlockName})"
 						else
-							@parsed += '<div class="codeblock"><pre>'
-							@parsed += safeHtml(codeBlockContent)
-							# @parsed += "123123"
-							# @parsed += codeBlockContent
+							@parsed += '<div class="codeblock"><pre>' + "\n\n"
+							@parsed += codeBlockContent
 							@parsed += '</pre></div>'
 							Rootz.logger.debug "no parsing ... ()"
 						end
@@ -193,7 +190,7 @@ module Rootz
 				if File.file? file
 					files << convert_link(file) if file =~ /\.rz$/
 				else
-					dirs << convert_link(file)
+					dirs << '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;&nbsp;' + convert_link(file)
 				end
 			end
 			dirs += files

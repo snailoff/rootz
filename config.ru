@@ -1,5 +1,6 @@
 ## This is not needed for Thin > 1.0.0
 require 'sass/plugin/rack'
+
 Sass::Plugin.options[:style] = :compressed
 use Sass::Plugin::Rack
 
