@@ -30,8 +30,8 @@ module Rootz
 			Rootz.logger.info "target full path : #{@target_path}"
 
 			unless File.exist? @target_path
-				if File.exist? "#{@target_path}.rz"
-					@target_path = "#{@target_path}.rz"
+				if File.exist? "#{@target_path}.txt"
+					@target_path = "#{@target_path}.txt"
 				else
 					@input_url = File.expand_path "..", @input_url
 					@target_path = File.expand_path "..", @target_path
@@ -195,7 +195,7 @@ module Rootz
 			Dir.glob "#{pathz}" do |file|
 				Rootz.logger.debug "read_dir.file : #{file}"
 				if File.file? file
-					files << convert_link(file) if file =~ /\.rz$/
+					files << convert_link(file) if file =~ /\.txt$/
 				else
 					dirs << '<span style="font-weight:bold;">+</span>&nbsp;&nbsp;' + convert_link(file)
 				end
@@ -243,7 +243,7 @@ module Rootz
 		end
 
 		def remove_tail path
-			path.gsub /(\/|.rz)$/, ''
+			path.gsub /(\/|.txt)$/, ''
 		end
 
 		def remove_root_prefix path
@@ -259,7 +259,7 @@ module Rootz
 		end
 
 		def basename path
-			File.basename path, ".rz"
+			File.basename path, ".txt"
 		end
 
 		def zero_o str
@@ -270,7 +270,7 @@ module Rootz
 			return "/default.jpg" if path == "/"
 
 			if File.file? path
-				name = File.basename path, '.rz'
+				name = File.basename path, '.txt'
 				dir = File.dirname path
 				target = File.join "#{dir}", "#{name}.*"
 				Dir.glob "#{target}" do |f|
@@ -279,7 +279,7 @@ module Rootz
 					end
 				end
 			else
-				name = File.basename path, '.rz'
+				name = File.basename path, '.txt'
 				target = File.join "#{path}", "_#{name}.*"
 				Dir.glob "#{target}" do |f|
 					if f =~ /\.(png|jpg|gif)$/i
