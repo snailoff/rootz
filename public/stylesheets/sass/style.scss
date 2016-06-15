@@ -20,16 +20,17 @@
   }
 }
 
+
 html, body { height: 100%; }
 body { 
-	background-color: #181818;
+	background-color: #fff;
 	color: #aaa;
 	padding:0px;
 }
 
 img {
 	padding: 2px;
-	border-radius: 10px;
+	border-radius: 5px;
 	width:480px;
 }
 
@@ -48,30 +49,30 @@ a:link, a:visited {
 
 
 .container {
-	background-color: #fcfcfc;
+	background-color: #fff;
 	padding: 0px;
 	height:100%;
 
 	.header_image {
-		width:500px;
-		height:309px;
+		width:300px;
+		
 		height:auto;
 		padding: 0px;
-		border-radius: 0px;
 	}
 
 	.logo {
 		padding:10px;
-		position:absolute;
+		//position:absolute;
 		top:0px;
 
 		a:link, a:visited {
-			color:white;
+			color:black;
 		}
 
 		.title {
 			font-size: 3em;	
-			color:white;			
+			font-weight: bold;
+			color:white;
 		}
 	}	
 
@@ -104,6 +105,7 @@ a:link, a:visited {
 
 		.subject {
 			color: #000;
+			padding: 10 0 10 0;
 		}
 
 		.body {

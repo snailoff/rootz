@@ -9,12 +9,13 @@
 	%body
 		.container
 			.logo
-				%span{:class => "title"}
-					%a{:href => "/"} rootz
 
-			%img{:class => "header_image", :src => @rz.header_image}
 			.rootz
 				%strong= @rz.navi
 				%h3{:class => "subject"}= @rz.subject
+				%img{:class => "header_image", :src => @rz.header_image}
 				= preserve do
 					%p= @rz.parsed
+			.footer
+				powered by 
+				%a{:href => "/"} rootz
