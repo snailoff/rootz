@@ -67,7 +67,7 @@ module Rootz
 				@plain = read_file @target_path
 			else
 				@plain = read_dir @target_path
-				@plain = "#{read_file @default_file_path}\n\n#{@plain}" if File.exist? @default_file_path
+				@plain = "#{read_file @default_file_path}<hr />#{@plain}" if File.exist? @default_file_path
 			end
 		end
 
@@ -267,7 +267,7 @@ module Rootz
 		end
 		
 		def default_image path
-			return "/default.jpg" if path == "/"
+			return "" if path == "/"
 
 			if File.file? path
 				name = File.basename path, '.txt'
@@ -278,17 +278,17 @@ module Rootz
 						return remove_root_prefix f
 					end
 				end
-			else
-				name = File.basename path, '.txt'
-				target = File.join "#{path}", "_#{name}.*"
-				Dir.glob "#{target}" do |f|
-					if f =~ /\.(png|jpg|gif)$/i
-						return remove_root_prefix f
-					end
-				end
+			# else
+			# 	name = File.basename path, '.txt'
+			# 	target = File.join "#{path}", "_#{name}.*"
+			# 	Dir.glob "#{target}" do |f|
+			# 		if f =~ /\.(png|jpg|gif)$/i
+			# 			return remove_root_prefix f
+			# 		end
+			# 	end
 			end
 
-			default_image File.dirname(path)
+			# default_image File.dirname(path)
 		end
 
 	end
