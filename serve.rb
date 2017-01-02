@@ -9,6 +9,7 @@ require './rootz'
 require './version'
 
 configure do
+	enable :reloader
 end
 
 get '/root/*' do |path|	

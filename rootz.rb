@@ -52,7 +52,7 @@ module Rootz
 
 			@header_image = default_image @target_path
 			@navi = convert_navi last_dir(@target_path)
-			@subject = @is_file ? basename(@target_path) : "*"
+			@subject = @is_file ? basename(@target_path) : ""
 
 			Rootz.logger.info "@subject : #{@subject}"
 			Rootz.logger.info "@default_file_path : #{@default_file_path}"
@@ -197,7 +197,7 @@ module Rootz
 				if File.file? file
 					files << "#{convert_link(file)} #{mtime(file)}" if file =~ /\.txt$/
 				else
-					dirs << '<span style="font-weight:bold;">+</span>&nbsp;&nbsp;' + convert_link(file)
+					dirs << convert_link(file)
 				end
 			end
 			dirs += files
@@ -217,7 +217,7 @@ module Rootz
                 atag.unshift a
 	        end
 
-	        ":: " + atag.join(" : ")
+	        atag.join(" &gt; ")
 		end
 
 		def convert_link path
