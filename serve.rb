@@ -9,6 +9,7 @@ require './rootz'
 require './version'
 
 configure do
+	enable :reloader
 end
 
 get '/root/*' do |path|	
@@ -30,7 +31,11 @@ get '/root/*' do |path|
 	
 end
 
-get '/*' do
+get '/' do
+  redirect to('/root/')
+end
+
+get '/root' do
   redirect to('/root/')
 end
 

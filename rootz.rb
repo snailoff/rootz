@@ -52,7 +52,7 @@ module Rootz
 
 			@header_image = default_image @target_path
 			@navi = convert_navi last_dir(@target_path)
-			@subject = @is_file ? basename(@target_path) : "*"
+			@subject = @is_file ? basename(@target_path) : ""
 
 			Rootz.logger.info "@subject : #{@subject}"
 			Rootz.logger.info "@default_file_path : #{@default_file_path}"
@@ -195,9 +195,9 @@ module Rootz
 			Dir.glob "#{pathz}" do |file|
 				Rootz.logger.debug "read_dir.file : #{file}"
 				if File.file? file
-					files << convert_link(file) if file =~ /\.txt$/
+					files << "#{convert_link(file)} #{mtime(file)}" if file =~ /\.txt$/
 				else
-					dirs << '<span style="font-weight:bold;">+</span>&nbsp;&nbsp;' + convert_link(file)
+					dirs << convert_link(file)
 				end
 			end
 			dirs += files
@@ -217,16 +217,19 @@ module Rootz
                 atag.unshift a
 	        end
 
-	        ":: " + atag.join(" : ")
+	        atag.join(" &gt; ")
 		end
 
 		def convert_link path
-			datetime = zero_o File.mtime(path).to_s
 			url = remove_tail(remove_root_prefix(path))
 			name = remove_tail(remove_head(remove_root_prefix(basename(path))))
 
-			rs = "<a href=\"#{url}\">#{name}</a> <span class=\"datetime\">#{datetime}</span>"
-			rs
+			"<a href=\"#{url}\">#{name}</a>"
+		end
+
+		def mtime path 
+			datetime = zero_o File.mtime(path).to_s
+			"<span class=\"datetime\">#{datetime}</span>"
 		end
 
 		def last_dir path
@@ -269,6 +272,8 @@ module Rootz
 		def default_image path
 			return "" if path == "/"
 
+			path = @default_file_path.empty? ? path : @default_file_path
+
 			if File.file? path
 				name = File.basename path, '.txt'
 				dir = File.dirname path
@@ -288,7 +293,7 @@ module Rootz
 			# 	end
 			end
 
-			# default_image File.dirname(path)
+			# header_image File.dirname(path)
 		end
 
 	end
