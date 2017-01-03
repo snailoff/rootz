@@ -80,8 +80,10 @@ module Rootz
 			codeBlockContent = ''
 			codeBlockName = ''
 
-			@plain.split(/\n/).each do |line|
+			images = Dir.glob("#{remove_tail(@target_path)}*").map {|x| x if x =~ /\.(png|jpg)$/i }.compact
+			images_idx = 0
 
+			@plain.split(/\n/).each do |line|
 				if isCodeBlock 
 					if line =~ /^```(.*)?$/
 						lexer = Rouge::Lexer.find codeBlockName
@@ -119,11 +121,7 @@ module Rootz
 				line.strip!
 
 				if /^@@\s*(?<title>.*)$/ =~ line
-					@config[:@parsed][:title] = title
-					next
-				end
-
-				if line =~ /^(@<|@>)/
+					@subject = title
 					next
 				end
 
@@ -146,6 +144,16 @@ module Rootz
 					line = "#{special($`)}<span class=\"codeline\">#{safeHtml(code)}</span>#{special($')}"
 					line += "<br />" unless isNoneBreakBlock
 					@parsed += line + "\n"
+					next
+				end
+
+				if /#img#/ =~ line 
+					if images_idx >= images.size
+						@parsed += "#{$`}"
+						next
+					end
+					@parsed += "<img src=\"#{remove_root_prefix(images.fetch(images_idx))}\" />"
+					images_idx += 1
 					next
 				end
 
@@ -181,7 +189,6 @@ module Rootz
 	  		str.gsub! />/, "&gt;"
 	  		str
 	  	end
-
 
 		def read_file path
 			File.read path
