@@ -50,7 +50,6 @@ module Rootz
 				@default_file_path = target if File.exist? target
 			end
 
-			@header_image = default_image @target_path
 			@navi = convert_navi last_dir(@target_path)
 			@subject = @is_file ? basename(@target_path) : ""
 
@@ -276,32 +275,32 @@ module Rootz
 			str.gsub /0/, 'o'
 		end
 		
-		def default_image path
-			return "" if path == "/"
+		# def default_image path
+		# 	return "" if path == "/"
 
-			path = @default_file_path.empty? ? path : @default_file_path
+		# 	path = @default_file_path.empty? ? path : @default_file_path
 
-			if File.file? path
-				name = File.basename path, '.txt'
-				dir = File.dirname path
-				target = File.join "#{dir}", "#{name}.*"
-				Dir.glob "#{target}" do |f|
-					if f =~ /\.(png|jpg|gif)$/i
-						return remove_root_prefix f
-					end
-				end
-			# else
-			# 	name = File.basename path, '.txt'
-			# 	target = File.join "#{path}", "_#{name}.*"
-			# 	Dir.glob "#{target}" do |f|
-			# 		if f =~ /\.(png|jpg|gif)$/i
-			# 			return remove_root_prefix f
-			# 		end
-			# 	end
-			end
+		# 	if File.file? path
+		# 		name = File.basename path, '.txt'
+		# 		dir = File.dirname path
+		# 		target = File.join "#{dir}", "#{name}.*"
+		# 		Dir.glob "#{target}" do |f|
+		# 			if f =~ /\.(png|jpg|gif)$/i
+		# 				return remove_root_prefix f
+		# 			end
+		# 		end
+		# 	# else
+		# 	# 	name = File.basename path, '.txt'
+		# 	# 	target = File.join "#{path}", "_#{name}.*"
+		# 	# 	Dir.glob "#{target}" do |f|
+		# 	# 		if f =~ /\.(png|jpg|gif)$/i
+		# 	# 			return remove_root_prefix f
+		# 	# 		end
+		# 	# 	end
+		# 	end
 
-			# header_image File.dirname(path)
-		end
+		# 	# header_image File.dirname(path)
+		# end
 
 	end
 
