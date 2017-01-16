@@ -5,7 +5,8 @@
 		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/bootstrap-theme.min.css'}
 		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/style.css'}
 		%link{:rel => 'stylesheet', :type => 'text/css', :href => '/stylesheets/rouge.css'}
-		
+		%meta{:name => "viewport", :content => "width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
+
 	%body
 		.container
 			.logo
@@ -14,8 +15,6 @@
 				hehe nana lala...
 			.rootz
 				%strong= @rz.navi
-				%h3{:class => "subject"}= @rz.subject
-				%img{:class => "header_image", :src => @rz.header_image}
 				= preserve do
 					%p= @rz.parsed
 			.footer

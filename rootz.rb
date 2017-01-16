@@ -50,7 +50,6 @@ module Rootz
 				@default_file_path = target if File.exist? target
 			end
 
-			@header_image = default_image @target_path
 			@navi = convert_navi last_dir(@target_path)
 			@subject = @is_file ? basename(@target_path) : ""
 
@@ -63,27 +62,59 @@ module Rootz
 			Rootz.logger.info
 			Rootz.logger.info "read @target_path : #{@target_path}"
 
-			if @is_file
-				@plain = read_file @target_path
-			else
-				@plain = read_dir @target_path
-				@plain = "#{read_file @default_file_path}<hr />#{@plain}" if File.exist? @default_file_path
-			end
+
+		end
+
+		def recent
+			#return if @input_path 
+			
+			
+
 		end
 
 		def parse
 			Rootz.logger.info
+			@parsed = ''			
 
-			@parsed = ''
-			isNoneBreakBlock = false
+			if @input_path.empty?
+				Rootz.logger.info "*** root. recent pages."
+				list = Dir.glob("#{File.expand_path "../public/root", __FILE__}/**/*.txt").sort_by{ |f| File.mtime(f) }.reverse
+				Rootz.logger.debug "===> #{list}"
+
+				list[0, 10].each do |f|
+					@parsed += render(f)
+					@parsed += "<br />"
+				end
+			end
+
+			@parsed += render(@target_path)
+
+	  	end
+
+	  	private
+
+	  	def render path
+	  		rs = ''
+	  		isNoneBreakBlock = false
 			isCodeBlock = false
 			codeBlockContent = ''
 			codeBlockName = ''
 
-			images = Dir.glob("#{remove_tail(@target_path)}*").map {|x| x if x =~ /\.(png|jpg)$/i }.compact
+	  		if File.file? path
+				plain = read_file path
+				rs += "<h3 class=\"subject\">#{basename(path)}</h3>"
+			else
+				plain = read_dir path
+				plain = "#{read_file default_filepath(path)}<hr />#{@plain}" if File.exist? default_filepath(path)
+			end
+
+			images = Dir.glob("#{remove_tail(path)}*").map {|x| x if x =~ /\.(png|jpg)$/i }.compact
 			images_idx = 0
 
-			@plain.split(/\n/).each do |line|
+			
+
+
+	  		plain.split(/\n/).each do |line|
 				if isCodeBlock 
 					if line =~ /^```(.*)?$/
 						lexer = Rouge::Lexer.find codeBlockName
@@ -91,12 +122,12 @@ module Rootz
 						if lexer 
 							source = "\n" + codeBlockContent
 							formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
-							@parsed += formatter.format(lexer.lex(source))
+							rs += formatter.format(lexer.lex(source))
 							Rootz.logger.debug "rouge parsing ... (#{codeBlockName})"
 						else
-							@parsed += '<div class="codeblock"><pre>' + "\n\n"
-							@parsed += codeBlockContent
-							@parsed += '</pre></div>'
+							rs += '<div class="codeblock"><pre>' + "\n\n"
+							rs += codeBlockContent
+							rs += '</pre></div>'
 							Rootz.logger.debug "no parsing ... ()"
 						end
 
@@ -120,10 +151,10 @@ module Rootz
 
 				line.strip!
 
-				if /^@@\s*(?<title>.*)$/ =~ line
-					@subject = title
-					next
-				end
+				# if /^@@\s*(?<title>.*)$/ =~ line
+				# 	@subject = title
+				# 	next
+				# end
 
 				if line =~ /^"""/
 					isNoneBreakBlock = isNoneBreakBlock ? false : true
@@ -131,28 +162,28 @@ module Rootz
 				end
 
 				if line =~ /^---/
-					@parsed += "<hr />"
+					rs += "<hr />"
 					next
 				end
 					
 				if line =~ /^(\={1,5})(.*)$/
-					@parsed += "<h#{$1.to_s.length}>#{$2}</h#{$1.to_s.length}>"
+					rs += "<h#{$1.to_s.length}>#{$2}</h#{$1.to_s.length}>"
 					next
 				end
 
 				if /``(?<code>.*?)``/ =~ line
 					line = "#{special($`)}<span class=\"codeline\">#{safeHtml(code)}</span>#{special($')}"
 					line += "<br />" unless isNoneBreakBlock
-					@parsed += line + "\n"
+					rs += line + "\n"
 					next
 				end
 
 				if /#img#/ =~ line 
 					if images_idx >= images.size
-						@parsed += "#{$`}"
+						rs += "#{$`}"
 						next
 					end
-					@parsed += "<img src=\"#{remove_root_prefix(images.fetch(images_idx))}\" />"
+					rs += "<img src=\"#{remove_root_prefix(images.fetch(images_idx))}\" />"
 					images_idx += 1
 					next
 				end
@@ -166,11 +197,11 @@ module Rootz
 
 				line += "<br />" unless isNoneBreakBlock
 
-				@parsed += line + "\n"
+				rs += line + "\n"
 			end
-	  	end
 
-	  	private
+			"<div class\"content\">#{rs}</div>"
+	  	end
 
 	  	def special str
 	  		str.gsub! /''(.*?)''/, "<strong>\\1</strong>"
@@ -188,6 +219,10 @@ module Rootz
 	  		str.gsub! /</, "&lt;"
 	  		str.gsub! />/, "&gt;"
 	  		str
+	  	end
+
+	  	def default_filepath path
+			"#{path}_#{File.basename path}" if File.exist? path
 	  	end
 
 		def read_file path
@@ -276,32 +311,32 @@ module Rootz
 			str.gsub /0/, 'o'
 		end
 		
-		def default_image path
-			return "" if path == "/"
+		# def default_image path
+		# 	return "" if path == "/"
 
-			path = @default_file_path.empty? ? path : @default_file_path
+		# 	path = @default_file_path.empty? ? path : @default_file_path
 
-			if File.file? path
-				name = File.basename path, '.txt'
-				dir = File.dirname path
-				target = File.join "#{dir}", "#{name}.*"
-				Dir.glob "#{target}" do |f|
-					if f =~ /\.(png|jpg|gif)$/i
-						return remove_root_prefix f
-					end
-				end
-			# else
-			# 	name = File.basename path, '.txt'
-			# 	target = File.join "#{path}", "_#{name}.*"
-			# 	Dir.glob "#{target}" do |f|
-			# 		if f =~ /\.(png|jpg|gif)$/i
-			# 			return remove_root_prefix f
-			# 		end
-			# 	end
-			end
+		# 	if File.file? path
+		# 		name = File.basename path, '.txt'
+		# 		dir = File.dirname path
+		# 		target = File.join "#{dir}", "#{name}.*"
+		# 		Dir.glob "#{target}" do |f|
+		# 			if f =~ /\.(png|jpg|gif)$/i
+		# 				return remove_root_prefix f
+		# 			end
+		# 		end
+		# 	# else
+		# 	# 	name = File.basename path, '.txt'
+		# 	# 	target = File.join "#{path}", "_#{name}.*"
+		# 	# 	Dir.glob "#{target}" do |f|
+		# 	# 		if f =~ /\.(png|jpg|gif)$/i
+		# 	# 			return remove_root_prefix f
+		# 	# 		end
+		# 	# 	end
+		# 	end
 
-			# header_image File.dirname(path)
-		end
+		# 	# header_image File.dirname(path)
+		# end
 
 	end
 

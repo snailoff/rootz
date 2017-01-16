@@ -43,7 +43,7 @@ body {
 }
 
 img {
-	padding: 20px;
+	padding: 10 20 10 20;
 	width:100%;
 	margin-left: auto;
 	margin-right: auto;
@@ -67,9 +67,7 @@ a:link, a:visited {
 	background-color: #fff;
 	padding: 0px;
 	border: 0px solid #ccc;
-	box-shadow: 1px 1px 5px #888888;
-	margin-top:1.5em;
-	margin-bottom:1.5em;
+	box-shadow: 1px 1px 3px #eee;
 
 	.logo {
 		padding:10px;
