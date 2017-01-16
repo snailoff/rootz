@@ -19,6 +19,7 @@ get '/root/*' do |path|
 		@rz = Rootz::Root.new path
 		@rz.check
 		@rz.read
+		@rz.recent
 		@rz.parse
 		
 	rescue Rootz::InvalidPathError => e
